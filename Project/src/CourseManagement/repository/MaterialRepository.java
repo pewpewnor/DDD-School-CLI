@@ -2,39 +2,39 @@ package CourseManagement.repository;
 
 import java.io.*;
 import java.util.*;
-import CourseManagement.factory.CourseFactory;
-import CourseManagement.model.Course;
+import CourseManagement.factory.MaterialFactory;
+import CourseManagement.model.Material;
 import base.Repository;
 import utils.*;
 
-public class CourseRepository extends Repository {
-    private static CourseRepository instance = null;
+public class MaterialRepository extends Repository {
+    private static MaterialRepository instance = null;
 
-    private CourseRepository() {
-        super("course");
+    private MaterialRepository() {
+        super("material");
     }
 
-    public static CourseRepository getInstance() {
-        return instance == null ? new CourseRepository() : instance;
+    public static MaterialRepository getInstance() {
+        return instance == null ? new MaterialRepository() : instance;
     }
 
-    private Course parseCourse(String[] items) {
+    private Material parseMaterial(String[] items) {
         int id = Integer.parseInt(items[0]);
         String name = items[1];
-        String description = items[2];
-        int teacherId = Integer.parseInt(items[3]);
+        String content = items[2];
+        int courseId = Integer.parseInt(items[3]);
 
-        return CourseFactory.createCourse(id, name, description, teacherId);
+        return MaterialFactory.createMaterial(id, name, content, courseId);
     }
 
-    public Course findById(int id) {
+    public Material findById(int id) {
         try {
             Scanner reader = new Scanner(file);
             while (reader.hasNext()) {
-                Course course = parseCourse(reader.nextLine().split("#"));
-                if (course.getId() == id) {
+                Material material = parseMaterial(reader.nextLine().split("#"));
+                if (material.getId() == id) {
                     reader.close();
-                    return course;
+                    return material;
                 }
             }
             reader.close();
@@ -45,15 +45,15 @@ public class CourseRepository extends Repository {
         return null;
     }
 
-    public ArrayList<Course> findAllByTeacherId(int teacherId) {
-        ArrayList<Course> courses = new ArrayList<>();
+    public ArrayList<Material> findAllByCourseId(int courseId) {
+        ArrayList<Material> materials = new ArrayList<>();
 
         try {
             Scanner reader = new Scanner(file);
             while (reader.hasNext()) {
-                Course course = parseCourse(reader.nextLine().split("#"));
-                if (course.getTeacherId() == teacherId) {
-                    courses.add(course);
+                Material material = parseMaterial(reader.nextLine().split("#"));
+                if (material.getCourseId() == courseId) {
+                    materials.add(material);
                 }
             }
             reader.close();
@@ -61,31 +61,31 @@ public class CourseRepository extends Repository {
             e.printStackTrace();
         }
 
-        return courses;
+        return materials;
     }
 
-    public ArrayList<Course> getAll() {
-        ArrayList<Course> courses = new ArrayList<>();
+    public ArrayList<Material> getAll() {
+        ArrayList<Material> materials = new ArrayList<>();
 
         try {
             Scanner reader = new Scanner(file);
             while (reader.hasNext()) {
-                Course course = parseCourse(reader.nextLine().split("#"));
-                courses.add(course);
+                Material material = parseMaterial(reader.nextLine().split("#"));
+                materials.add(material);
             }
             reader.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
-        return courses;
+        return materials;
     }
 
-    public void insert(String name, String description, int teacherId) {
+    public void insert(String name, String content, int courseId) {
         try {
             FileWriter writer = new FileWriter(file, true);
-            writer.append(new WriteDataBuilder().add(Generate.generateLatestId(file)).add(name).add(description)
-                    .add(teacherId)
+            writer.append(new WriteDataBuilder().add(Generate.generateLatestId(file)).add(name).add(content)
+                    .add(courseId)
                     .getResult());
             writer.close();
         } catch (IOException e) {
@@ -93,11 +93,11 @@ public class CourseRepository extends Repository {
         }
     }
 
-    public void update(int id, String name, String description, int teacherId) {
+    public void update(int id, String name, String content, int courseId) {
         delete(id);
         try {
             FileWriter writer = new FileWriter(file, true);
-            writer.append(new WriteDataBuilder().add(id).add(name).add(description).add(teacherId)
+            writer.append(new WriteDataBuilder().add(id).add(name).add(content).add(courseId)
                     .getResult());
             writer.close();
         } catch (IOException e) {
@@ -105,8 +105,8 @@ public class CourseRepository extends Repository {
         }
     }
 
-    private Course delete(int id) {
-        Course deleted = null;
+    private Material delete(int id) {
+        Material deleted = null;
         String tempContent = "";
 
         try {
@@ -114,10 +114,10 @@ public class CourseRepository extends Repository {
 
             while (reader.hasNext()) {
                 String line = reader.nextLine();
-                Course course = parseCourse(line.split("#"));
+                Material material = parseMaterial(line.split("#"));
 
-                if (course.getId() == id) {
-                    deleted = course;
+                if (material.getId() == id) {
+                    deleted = material;
                 } else {
                     tempContent += line + "\n";
                 }

@@ -2,39 +2,39 @@ package CourseManagement.repository;
 
 import java.io.*;
 import java.util.*;
-import CourseManagement.factory.CourseFactory;
-import CourseManagement.model.Course;
+import CourseManagement.factory.AssignmentFactory;
+import CourseManagement.model.Assignment;
 import base.Repository;
 import utils.*;
 
-public class CourseRepository extends Repository {
-    private static CourseRepository instance = null;
+public class AssignmentRepository extends Repository {
+    private static AssignmentRepository instance = null;
 
-    private CourseRepository() {
-        super("course");
+    private AssignmentRepository() {
+        super("assignment");
     }
 
-    public static CourseRepository getInstance() {
-        return instance == null ? new CourseRepository() : instance;
+    public static AssignmentRepository getInstance() {
+        return instance == null ? new AssignmentRepository() : instance;
     }
 
-    private Course parseCourse(String[] items) {
+    private Assignment parseAssignment(String[] items) {
         int id = Integer.parseInt(items[0]);
         String name = items[1];
         String description = items[2];
-        int teacherId = Integer.parseInt(items[3]);
+        int courseId = Integer.parseInt(items[3]);
 
-        return CourseFactory.createCourse(id, name, description, teacherId);
+        return AssignmentFactory.createAssignment(id, name, description, courseId);
     }
 
-    public Course findById(int id) {
+    public Assignment findById(int id) {
         try {
             Scanner reader = new Scanner(file);
             while (reader.hasNext()) {
-                Course course = parseCourse(reader.nextLine().split("#"));
-                if (course.getId() == id) {
+                Assignment assignment = parseAssignment(reader.nextLine().split("#"));
+                if (assignment.getId() == id) {
                     reader.close();
-                    return course;
+                    return assignment;
                 }
             }
             reader.close();
@@ -45,15 +45,15 @@ public class CourseRepository extends Repository {
         return null;
     }
 
-    public ArrayList<Course> findAllByTeacherId(int teacherId) {
-        ArrayList<Course> courses = new ArrayList<>();
+    public ArrayList<Assignment> findAllByCourseId(int courseId) {
+        ArrayList<Assignment> assignments = new ArrayList<>();
 
         try {
             Scanner reader = new Scanner(file);
             while (reader.hasNext()) {
-                Course course = parseCourse(reader.nextLine().split("#"));
-                if (course.getTeacherId() == teacherId) {
-                    courses.add(course);
+                Assignment assignment = parseAssignment(reader.nextLine().split("#"));
+                if (assignment.getCourseId() == courseId) {
+                    assignments.add(assignment);
                 }
             }
             reader.close();
@@ -61,31 +61,31 @@ public class CourseRepository extends Repository {
             e.printStackTrace();
         }
 
-        return courses;
+        return assignments;
     }
 
-    public ArrayList<Course> getAll() {
-        ArrayList<Course> courses = new ArrayList<>();
+    public ArrayList<Assignment> getAll() {
+        ArrayList<Assignment> assignments = new ArrayList<>();
 
         try {
             Scanner reader = new Scanner(file);
             while (reader.hasNext()) {
-                Course course = parseCourse(reader.nextLine().split("#"));
-                courses.add(course);
+                Assignment assignment = parseAssignment(reader.nextLine().split("#"));
+                assignments.add(assignment);
             }
             reader.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
-        return courses;
+        return assignments;
     }
 
-    public void insert(String name, String description, int teacherId) {
+    public void insert(String name, String description, int courseId) {
         try {
             FileWriter writer = new FileWriter(file, true);
             writer.append(new WriteDataBuilder().add(Generate.generateLatestId(file)).add(name).add(description)
-                    .add(teacherId)
+                    .add(courseId)
                     .getResult());
             writer.close();
         } catch (IOException e) {
@@ -93,11 +93,11 @@ public class CourseRepository extends Repository {
         }
     }
 
-    public void update(int id, String name, String description, int teacherId) {
+    public void update(int id, String name, String description, int courseId) {
         delete(id);
         try {
             FileWriter writer = new FileWriter(file, true);
-            writer.append(new WriteDataBuilder().add(id).add(name).add(description).add(teacherId)
+            writer.append(new WriteDataBuilder().add(id).add(name).add(description).add(courseId)
                     .getResult());
             writer.close();
         } catch (IOException e) {
@@ -105,8 +105,8 @@ public class CourseRepository extends Repository {
         }
     }
 
-    private Course delete(int id) {
-        Course deleted = null;
+    private Assignment delete(int id) {
+        Assignment deleted = null;
         String tempContent = "";
 
         try {
@@ -114,10 +114,10 @@ public class CourseRepository extends Repository {
 
             while (reader.hasNext()) {
                 String line = reader.nextLine();
-                Course course = parseCourse(line.split("#"));
+                Assignment assignment = parseAssignment(line.split("#"));
 
-                if (course.getId() == id) {
-                    deleted = course;
+                if (assignment.getId() == id) {
+                    deleted = assignment;
                 } else {
                     tempContent += line + "\n";
                 }
