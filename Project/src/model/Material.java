@@ -1,17 +1,18 @@
 package model;
 
-public class Assignment {
+public class Material {
     private int id;
     private String name;
     private String description;
-    private int courseId;
+    private Integer CourseID;
 
-    public Assignment(int id, String name, String description, int courseId) {
+    public Material(int id, String name, String description, Integer CourseID) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.courseId = courseId;
+        this.CourseID = CourseID;
     }
+
 
     public int getId() {
         return this.id;
@@ -37,12 +38,13 @@ public class Assignment {
         this.description = description;
     }
 
-    public int getCourseId() {
-        return this.courseId;
+    public Integer getCourseID() {
+        return this.CourseID;
     }
 
-    public void setCourseId(int courseId) {
-        this.courseId = courseId;
+    public void setCourseID(Integer CourseID) {
+        this.CourseID = CourseID;
     }
+
 
 }
